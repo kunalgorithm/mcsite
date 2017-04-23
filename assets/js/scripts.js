@@ -110,78 +110,235 @@ $(document).ready(function() {
 
 
 
-//  ---------- video code below
-var tag = document.createElement('script');
-		tag.src = 'https://www.youtube.com/player_api';
-var firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-var tv,
-		playerDefaults = {autoplay: 0, autohide: 1, modestbranding: 0, rel: 0, showinfo: 0, controls: 0, disablekb: 1, enablejsapi: 0, iv_load_policy: 3};
-var vid = [
-			// {'videoId': '2b5QNj-BVhs', 'startSeconds': 515, 'endSeconds': 690, 'suggestedQuality': 'hd720'},
-			// {'videoId': '9ge5PzHSS0Y', 'startSeconds': 465, 'endSeconds': 657, 'suggestedQuality': 'hd720'},
-			{'videoId': 'b-0KqpO35Rc', 'startSeconds': 0, 'endSeconds': 240, 'suggestedQuality': 'hd720'},
-			// {'videoId': 'qMR-mPlyduE', 'startSeconds': 19, 'endSeconds': 241, 'suggestedQuality': 'hd720'}
-		],
-		randomVid = Math.floor(Math.random() * vid.length),
-    currVid = randomVid;
+//  ---------- SCRIPTS 2 ---------------------------------------------------------------------
 
-$('.hi em:last-of-type').html(vid.length);
 
-function onYouTubePlayerAPIReady(){
-  tv = new YT.Player('tv', {events: {'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange}, playerVars: playerDefaults});
-}
+ // Initialise video background
+ if (!device.tablet() && !device.mobile()) {
+     $(function() {
+         $(".player").mb_YTPlayer();
+     });
+ } else {
+     $('body').addClass('mobile');
+ }
 
-function onPlayerReady(){
-  tv.loadVideoById(vid[currVid]);
-  tv.mute();
-}
+ // Intro
+ $(function() {
+     $("#fill-text").wordsrotator({
+         words: ['UI Designers', 'Programmers', 'SEO Experts'],
+         speed: 4000
+     });
+ });
 
-function onPlayerStateChange(e) {
-  if (e.data === 1){
-    $('#tv').addClass('active');
-    $('.hi em:nth-of-type(2)').html(currVid + 1);
-  } else if (e.data === 2){
-    $('#tv').removeClass('active');
-    if(currVid === vid.length - 1){
-      currVid = 0;
-    } else {
-      currVid++;  
-    }
-    tv.loadVideoById(vid[currVid]);
-    tv.seekTo(vid[currVid].startSeconds);
-  }
-}
+ $(function() {
+     $('#intro hgroup h1,#scr-down').fadeIn('slow');
+ });
 
-function vidRescale(){
+ // -----------------Animations (using superscrollorama plugin)------------
+ $(document).ready(function() {
+     var controller = $.superscrollorama();
 
-  var w = $(window).width()+200,
-    h = $(window).height()+200;
+     // About section
+     controller.addTween('#about', TweenMax.fromTo($('#about h5'), .3, {
+         css: {
+             opacity: 0,
+             'letter-spacing': 0
+         },
+         immediateRender: true,
+         ease: Quad.easeInOut
+     }, {
+         css: {
+             opacity: 1,
+             'letter-spacing': '4px'
+         },
+         ease: Quad.easeInOut
+     }), 0, -100);
+     controller.addTween('#about', TweenMax.from($('#about h1'), .6, {
+         css: {
+             top: '50px',
+             opacity: 0
+         }
+     }));
+     controller.addTween('#about', TweenMax.from($('#about h4'), .6, {
+         css: {
+             marginTop: '-50px',
+             opacity: 0
+         }
+     }));
 
-  if (w/h > 16/9){
-    tv.setSize(w, w/16*9);
-    $('.tv .screen').css({'left': '0px'});
-  } else {
-    tv.setSize(h/9*16, h);
-    $('.tv .screen').css({'left': -($('.tv .screen').outerWidth()-w)/2});
-  }
-}
+     // Services Title
+     controller.addTween('#services', TweenMax.from($('#services>h2 span'), .4, {
+         css: {
+             top: '35px',
+             opacity: 0
+         }
+     }), 1, -60);
+     $('#services article div').css('position', 'relative').each(function() {
+         controller.addTween('#services', TweenMax.from($(this), 1, {
+             delay: Math.random() * .2,
+             css: {
+                 left: Math.random() * 200 - 100,
+                 top: Math.random() * 200 - 100,
+                 opacity: 0
+             },
+             ease: Back.easeOut
+         }));
+     });
 
-$(window).on('load resize', function(){
-  vidRescale();
-});
+     // Services section
+     controller.addTween(
+         '#process article', (new TimelineLite())
+         .append([
+             TweenMax.from($('#ideate'), .4, {
+                 delay: .4,
+                 css: {
+                     opacity: 0,
+                     right: '10%'
+                 }
+             }),
+             TweenMax.from($('#photoshop'), .4, {
+                 delay: .45,
+                 css: {
+                     opacity: 0,
+                     right: '20%'
+                 }
+             }),
+             TweenMax.from($('#code'), .4, {
+                 delay: .5,
+                 css: {
+                     opacity: 0,
+                     right: '25%'
+                 }
+             }),
+             TweenMax.from($('#optimize'), .3, {
+                 delay: .55,
+                 css: {
+                     opacity: 0,
+                     right: '35%'
+                 }
+             })
 
-$('.hi span:first-of-type').on('click', function(){
-  $('#tv').toggleClass('mute');
-  $('.hi em:first-of-type').toggleClass('hidden');
-  if($('#tv').hasClass('mute')){
-    tv.mute();
-  } else {
-    tv.unMute();
-  }
-});
+         ]),
+         1, -200
+     );
 
-$('.hi span:last-of-type').on('click', function(){
-  $('.hi em:nth-of-type(2)').html('~');
-  tv.pauseVideo();
-});
+     // Portfolio
+     controller.addTween('#portfolio>h2', TweenMax.fromTo($('#portfolio>h2'), .3, {
+         css: {
+             opacity: 0,
+             'letter-spacing': '40px'
+         },
+         immediateRender: true,
+         ease: Quad.easeInOut
+     }, {
+         css: {
+             opacity: 1,
+             'letter-spacing': '0px'
+         },
+         ease: Quad.easeInOut
+     }), 0, -50);
+     $('.item').css('position', 'relative').each(function() {
+
+         controller.addTween('#portfolio>h2', TweenMax.from($(this), 1.5, {
+             delay: Math.random() * .2,
+             css: {
+                 left: Math.random() * 200 - 100,
+                 top: Math.random() * 200 - 100,
+                 opacity: 0
+             },
+             ease: Back.easeOut
+         }));
+     });
+
+     // Contact form stroke
+     controller.addTween('#contact_form>hr', TweenMax.from($('#contact_form>hr'), .3, {
+         css: {
+             width: 0
+         },
+         ease: Quad.easeInOut
+     }));
+ });
+
+ // Initialize Portfolio
+ $("#port-items").diamonds({
+     itemSelector: ".item"
+ });
+
+ // Google Map for contact section
+ window.onload = function() {
+     var styles = [{
+         featureType: 'water',
+         elementType: 'geometry.fill',
+         stylers: [{
+             color: '#adc9b8'
+         }]
+     }, {
+         featureType: 'landscape.natural',
+         elementType: 'all',
+         stylers: [{
+             hue: '#00aaff'
+         }, {
+             saturation: '-95'
+         }, {
+             lightness: 0
+         }]
+     }, {
+         featureType: 'poi',
+         elementType: 'geometry',
+         stylers: [{
+             hue: '#f9e0b7'
+         }, {
+             lightness: 30
+         }]
+     }, {
+         featureType: 'road',
+         elementType: 'geometry',
+         stylers: [{
+             hue: '#00aaff'
+         }, {
+             saturation: '-95'
+         }, {
+             lightness: 14
+         }]
+     }, ];
+     var options = {
+         mapTypeControlOptions: {
+             mapTypeIds: ['Styled']
+         },
+         center: new google.maps.LatLng(29.714946132163774, -95.40067778653872),
+         zoom: 15,
+         streetViewControl: false,
+         mapTypeControl: false,
+         scrollwheel: false,
+         mapTypeId: 'Styled'
+     };
+     var div = document.getElementById('map');
+     var map = new google.maps.Map(div, options);
+     var marker_img = 'images/gps_marker.png';
+     var marker = new google.maps.Marker({
+         position: new google.maps.LatLng(29.7124, -95.4006),
+         map: map,
+         icon: marker_img,
+         title: "Prasanjit Singh"
+     });
+     var styledMapType = new google.maps.StyledMapType(styles, {
+         name: 'Styled'
+     });
+     map.mapTypes.set('Styled', styledMapType);
+ }
+
+ // Smooth scroll for anchor click
+ $(function() {
+     $('a[href*=#]:not([href=#])').click(function() {
+         if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+             var target = $(this.hash);
+             target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+             if (target.length) {
+                 $('html,body').animate({
+                     scrollTop: target.offset().top
+                 }, 1000);
+                 return false;
+             }
+         }
+     });
+ });

@@ -402,7 +402,7 @@ footer {
       color: #44CCFF; }
 
 #home-banner, #mcteam-banner, #student-banner {
-  background: url("/Users/Kunal/Desktop/acapics/pink.jpg") center center no-repeat;
+  background: center center no-repeat;
   /*background: url("/Users/Kunal/Desktop/acapics/side.jpg") center center no-repeat;*/
   background-size: cover; }
 
